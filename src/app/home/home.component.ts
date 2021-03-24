@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthenticationService } from '../business/services/authentication.service';
+import { GenericService } from '../business/services/generic.service';
+import { Person } from '../infrastructure/models/person.model';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +11,32 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  currentUser: any;
+  persons: Person[];
+
+  constructor(
+    private router: Router,
+    private authenticationService: AuthenticationService,
+    private genericService: GenericService<Person>
+  ) { 
+    this.currentUser = this.authenticationService.currentUserValue;
+  }
 
   ngOnInit(): void {
+    this.genericService.getAll('person')
+      .subscribe(
+        persons => {
+          this.persons = persons;
+        },
+        errors => {
+          console.log(errors.message);
+        }
+      );
+  }
+
+  logout() {
+    this.authenticationService.logout();
+    this.router.navigate(['/login']);
   }
 
 }
