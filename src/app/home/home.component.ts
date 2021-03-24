@@ -13,13 +13,13 @@ export class HomeComponent implements OnInit {
 
   currentUser: any;
   persons: Person[];
+  titlePage: string = 'Home'
 
   constructor(
-    private router: Router,
     private authenticationService: AuthenticationService,
     private genericService: GenericService<Person>
   ) { 
-    this.currentUser = this.authenticationService.currentUserValue;
+    this.currentUser = this.authenticationService.getCurrentUser();
   }
 
   ngOnInit(): void {
@@ -32,11 +32,6 @@ export class HomeComponent implements OnInit {
           console.log(errors.message);
         }
       );
-  }
-
-  logout() {
-    this.authenticationService.logout();
-    this.router.navigate(['/login']);
   }
 
 }
