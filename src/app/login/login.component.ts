@@ -17,6 +17,7 @@ export class LoginComponent implements OnInit {
   success = '';
   faExclamationCircle = faExclamationCircle;
   faInfoCircle = faInfoCircle;
+  yearNow: number = new Date().getFullYear();
   
   get f() { return this.loginForm.controls; }
 
@@ -26,8 +27,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private authenticationService: AuthenticationService
   ) {
-    if (this.authenticationService.currentUserValue) { 
-        this.router.navigate(['home']);
+    if (this.authenticationService.getToken()) { 
+        this.router.navigate(['/home']);
     }
   }
 
@@ -49,7 +50,7 @@ export class LoginComponent implements OnInit {
               this.success = user.Message;
               this.loginForm.reset();
               setTimeout(() => {
-                this.router.navigate(['home']);
+                this.router.navigate(['/home']);
               }, 3000);
           },
           error => {

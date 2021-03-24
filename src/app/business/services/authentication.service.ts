@@ -15,25 +15,16 @@ const httpOptions = {
 })
 export class AuthenticationService {
 
-  private currentUserSubject: BehaviorSubject<User>;
-    public currentUser: Observable<User>;
-
-    constructor(private http: HttpClient) {
-        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
-        this.currentUser = this.currentUserSubject.asObservable();
-    }
-
-    public get currentUserValue(): User {
-        return this.currentUserSubject.value;
-    }
+    constructor(private http: HttpClient) { }
 
     login(email: string, password: string) {
         return this.http.post<any>(`${API_URL}/Authentication/Login`, { email, password }, httpOptions)
             .pipe(
               map(
                 user => {
+                  console.log(user);
                   localStorage.setItem('token', user.Token);
-                  this.currentUserSubject.next(user);
+                  localStorage.setItem('currentUser', JSON.stringify(user));
                   return user;
                 }
               )
@@ -42,10 +33,14 @@ export class AuthenticationService {
 
     logout() {
         localStorage.removeItem('token');
-        this.currentUserSubject.next(null);
+        localStorage.removeItem('currentUser');
     }
 
-    public getToken(): string {
+    getCurrentUser() {
+      return JSON.parse(localStorage.getItem('currentUser')); 
+    }
+
+    getToken(): string {
       return localStorage.getItem('token');
     }
 }
