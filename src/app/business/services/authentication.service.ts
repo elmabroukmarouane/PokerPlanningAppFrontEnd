@@ -1,9 +1,14 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from 'src/app/infrastructure/models/user.model';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
+
+const API_URL = environment.apiUrl;
+const httpOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+};
 
 @Injectable({
   providedIn: 'root'
@@ -23,11 +28,11 @@ export class AuthenticationService {
     }
 
     login(email: string, password: string) {
-        return this.http.post<any>(`${environment.apiUrl}/Authentication/Login`, { email, password })
+        return this.http.post<any>(`${API_URL}/Authentication/Login`, { email, password }, httpOptions)
             .pipe(
               map(
                 user => {
-                  localStorage.setItem('currentUser', JSON.stringify(user));
+                  localStorage.setItem('token', user.Token);
                   this.currentUserSubject.next(user);
                   return user;
                 }
@@ -36,7 +41,11 @@ export class AuthenticationService {
     }
 
     logout() {
-        localStorage.removeItem('currentUser');
+        localStorage.removeItem('token');
         this.currentUserSubject.next(null);
+    }
+
+    public getToken(): string {
+      return localStorage.getItem('token');
     }
 }

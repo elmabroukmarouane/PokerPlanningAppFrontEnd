@@ -6,7 +6,7 @@ export class User {
     roleid: Number;
     personid: Number;
     email: string;
-    password: string;
+    password?: string;
     role: Role;
     person: Person;
 }
