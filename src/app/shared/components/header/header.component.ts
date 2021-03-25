@@ -12,10 +12,10 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private authenticationService: AuthenticationService
-  ) {  
+  ) { }
+
+  ngOnInit(): void { 
     this.currentUser = this.authenticationService.getCurrentUser();
   }
-
-  ngOnInit(): void { }
 
 }

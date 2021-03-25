@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './components/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -12,6 +12,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { AuthenticationService } from './business/services/authentication.service';
 import { GenericService } from './business/services/generic.service';
 import { LayoutModule } from './layout/layout.module';
+import { DataTablesModule } from "angular-datatables";
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { LayoutModule } from './layout/layout.module';
     FontAwesomeModule,
     HttpClientModule,
     AppRoutingModule,
-    LayoutModule
+    LayoutModule,
+    DataTablesModule
   ],
   providers: [
     AuthenticationService,

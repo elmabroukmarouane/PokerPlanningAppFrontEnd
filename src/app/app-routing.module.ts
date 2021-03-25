@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
-import { LoginComponent } from './login/login.component';
-import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './components/login/login.component';
+import { HomeComponent } from './components/guarded-components/home/home.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { LayoutComponent } from './layout/layout.component';
+import { GroupsComponent } from './components/guarded-components/groups/groups.component';
 
 
 
@@ -15,7 +16,8 @@ const routes: Routes = [
     component: LayoutComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'home', component: HomeComponent }
+      { path: 'home', component: HomeComponent },
+      { path: 'groups', component: GroupsComponent }
     ]
   },
   { path: 'login', component: LoginComponent },

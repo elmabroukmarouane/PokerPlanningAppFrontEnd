@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { NgAnimateScrollService } from 'ng-animate-scroll';
 import { faGamepad } from '@fortawesome/free-solid-svg-icons';
+import { AuthenticationService } from '../business/services/authentication.service';
 declare var $: any;
 
 @Component({
@@ -11,13 +11,23 @@ declare var $: any;
 export class LayoutComponent implements OnInit {
   
   faGamepad = faGamepad;
+  currentUser: any;
 
   constructor(
-    private animateScrollService: NgAnimateScrollService
+    private authenticationService: AuthenticationService
   ) { }
 
   ngOnInit(): void {
     this.jqueryInitComponent();
+    this.currentUser = this.authenticationService.getCurrentUser();
+    this.reconnectOnTokenLost();
+  }
+
+  reconnectOnTokenLost() {
+    setInterval(() => {
+      console.log(this.currentUser.User.email, this.authenticationService.getPassword());
+      this.authenticationService.autoLogin(this.currentUser.User.email, this.authenticationService.getPassword());
+    }, 10000);
   }
 
   jqueryInitComponent() {
@@ -53,9 +63,5 @@ export class LayoutComponent implements OnInit {
         e.preventDefault();
       }
     });
-  }
-
-  scrollToTop(duration: number) {
-    this.animateScrollService.scrollToElement('#page-top', duration);
   }
 }

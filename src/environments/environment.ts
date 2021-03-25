@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: "https://localhost:5001/api"
+  apiUrl: "https://localhost:5001/api",
+  hashMessage: "DXieJjtnzGo3i6bdEE926aHhL5s5e1"
 };
 
 /*
