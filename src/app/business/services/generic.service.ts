@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import * as moment from 'moment';
 
 const API_URL = environment.apiUrl;
 const httpOptions = {
@@ -32,6 +33,10 @@ export class GenericService<TEntity> {
 
   Delete(endPoint: string, id: number) {
     return this.http.delete(`${API_URL}/${endPoint}/${id}`, httpOptions);
+  }
+
+  getDateNow(): string {
+    return moment().format("YYYY-MM-DD HH:mm:ss").toString();
   }
 
 }

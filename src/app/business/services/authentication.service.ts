@@ -43,7 +43,6 @@ export class AuthenticationService {
                   localStorage.setItem('tokenS', this.encryptPassword(password));
                   localStorage.setItem('token', user.Token);
                   localStorage.setItem('currentUser', JSON.stringify(user));
-                  console.log('OK :D !');
                 }
               )
             );

@@ -1,53 +1,119 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { GenericService } from 'src/app/business/services/generic.service';
 import { Group } from 'src/app/infrastructure/models/group.model';
 import { Subject } from 'rxjs';
+import { faTrashAlt, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthenticationService } from 'src/app/business/services/authentication.service';
+import { DataTableDirective } from 'angular-datatables';
+declare var $: any;
 
 @Component({
   selector: 'app-groups',
   templateUrl: './groups.component.html',
   styleUrls: ['./groups.component.css']
 })
-export class GroupsComponent implements OnInit, OnDestroy {
+export class GroupsComponent implements OnInit, OnDestroy, AfterViewInit {
+
+  @ViewChild(DataTableDirective, {static: false})
+  dtElement: DataTableDirective;
   
   titlePage: string = 'Groups Management';
   titleTable: string = 'Groups List';
-  groups: Group[];
+  titleForm: string = 'Add Group';
+  groups: Group[] = [];
   dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
+  faTrashAlt = faTrashAlt;
+  faPencilAlt = faPencilAlt;
+  addUpdateForm: FormGroup;
+  isUpdate: boolean = false;
+  currentUser: any;
+  indexGroupArray = -1;
 
-  // We use this trigger because fetching the list of persons can be quite long,
-  // thus we ensure the data is fetched before rendering
-  // For more information please visit the package github : https://l-lin.github.io/angular-datatables/#/welcome
-  dtTrigger: Subject<Group> = new Subject<Group>();
+  // For more information about Datatable Angular please visit the package github : https://l-lin.github.io/angular-datatables/#/welcome
+
+  get f() { return this.addUpdateForm.controls; }
 
   constructor(
+    private authenticationService: AuthenticationService,
+    private formBuilder: FormBuilder,
     private genericService: GenericService<Group>
   ) { }
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
 
-  ngOnInit(): void {
-    this.dtOptions = {
-      pagingType: 'full_numbers',
-      pageLength: 10,
-      serverSide: true,
-      processing: true,
-      ajax: (dataTablesParameters: any, callback) => {
-        this.genericService.getAll('group')
+  renderer(): void {
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      dtInstance.destroy();
+      this.refreshData();
+      this.dtTrigger.next();
+    });
+  }
+
+  refreshData() {
+    this.genericService.getAll('group')
         .subscribe(
           groups => {
             this.groups = groups;
-            this.dtTrigger.next();
           },
           errors => {
             console.log(errors.message);
           }
         );
-      },
-      columns: [{ data: 'groupname' }]
-    };
   }
 
+  ngOnInit(): void {
+    this.currentUser = this.authenticationService.getCurrentUser();
+    this.addUpdateForm = this.formBuilder.group({
+      id: [''],
+      groupname: ['', [Validators.required]]
+    });
+    this.dtOptions = {
+      pagingType: 'full_numbers',
+      processing: true,
+      pageLength: 10
+    };
+    this.refreshData();
+  }
+  
   ngOnDestroy(): void {
-    // Do not forget to unsubscribe the event
     this.dtTrigger.unsubscribe();
+  }
+
+  onSubmit() {
+    if (this.addUpdateForm.invalid) {
+      return;
+    }
+    if(!this.isUpdate) {
+      let group = new Group(
+        0, 
+        this.genericService.getDateNow(), 
+        null, 
+        this.currentUser.User.person.firstname + ' ' + this.currentUser.User.person.lastname, 
+        null, 
+        this.f.groupname.value);
+      this.genericService.Add('group', group);
+      // this.renderer();
+    }
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.isUpdate = false;
+    this.titleForm = 'Add Group';
+    this.addUpdateForm.reset();
+  }
+
+  setIndex(index: any) {
+    this.indexGroupArray = index;
+  }
+
+  delete() {
+    this.genericService.Delete('group', this.groups[this.indexGroupArray].id);
+    this.groups.splice(this.indexGroupArray, 1);
+    this.indexGroupArray = -1;
+    $('#deleteModal').modal('hide');
   }
 }

@@ -7,6 +7,11 @@ import { ComponentsModule } from '../shared/components/components.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GroupsComponent } from '../components/guarded-components/groups/groups.component';
 import { DataTablesModule } from "angular-datatables";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AuthenticationService } from '../business/services/authentication.service';
+import { GenericService } from '../business/services/generic.service';
+import { JwtInterceptor } from '../interceptors/jwt.interceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 
 
@@ -21,7 +26,14 @@ import { DataTablesModule } from "angular-datatables";
     RouterModule,
     ComponentsModule,
     FontAwesomeModule,
-    DataTablesModule
-  ]
+    DataTablesModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
+  providers: [
+    AuthenticationService,
+    GenericService,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+  ],
 })
 export class LayoutModule { }

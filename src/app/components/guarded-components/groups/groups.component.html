@@ -6,27 +6,74 @@
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ titleForm }}</h6>
+        </div>
+        <div class="card-body">
+            <form autocomplete="off" [formGroup]="addUpdateForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                  <label for="group">Group Name</label>
+                  <input type="hidden" class="form-control" id="id" formControlName="id">
+                  <input type="text" class="form-control" id="groupname" placeholder="Enter group" formControlName="groupname" [ngClass]="{ 'is-invalid': f.groupname.invalid && (f.groupname.dirty || f.groupname.touched) }">
+                  <div *ngIf="f.groupname.invalid && (f.groupname.dirty || f.groupname.touched)" class="invalid-feedback">
+                      <div *ngIf="f.groupname.errors.required">this field is required</div>
+                  </div>
+                </div>
+                <button [disabled]="addUpdateForm.invalid" class="btn btn-primary">{{ titleForm }}</button>&nbsp;
+                <button class="btn btn-danger" (click)="resetForm()">Reset form</button>
+              </form>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">{{ titleTable }}</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered" width="100%" cellspacing="0">
+                <table *ngIf="groups" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered text-center" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
                             <th>Name</th>
+                            <th>Actions</th>
                         </tr>
                     </tfoot>
                     <tbody>
-                        <tr *ngFor="let group of groups">
+                        <tr *ngFor="let group of groups; index as i">
                             <td>{{ group.groupname }}</td>
+                            <td>
+                                <!-- <a class="btn btn-warning btn-circle"><fa-icon [icon]="faPencilAlt"></fa-icon></a>&nbsp; -->
+                                <a class="btn btn-danger btn-circle" data-toggle="modal" data-target="#deleteModal" (click)="setIndex(i)"><fa-icon [icon]="faTrashAlt"></fa-icon></a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+                    <input type="hidden" [(ngModel)]="indexGroupArray"/>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Do you really want to delete this ?</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="javascript:void(0)" (click)="delete()">Delete</a>
+                </div>
             </div>
         </div>
     </div>
