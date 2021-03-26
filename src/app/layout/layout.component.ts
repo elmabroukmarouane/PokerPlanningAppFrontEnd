@@ -20,12 +20,11 @@ export class LayoutComponent implements OnInit {
   ngOnInit(): void {
     this.jqueryInitComponent();
     this.currentUser = this.authenticationService.getCurrentUser();
-    this.reconnectOnTokenLost();
+    //this.reconnectOnTokenLost();
   }
 
   reconnectOnTokenLost() {
     setInterval(() => {
-      console.log(this.currentUser.User.email, this.authenticationService.getPassword());
       this.authenticationService.autoLogin(this.currentUser.User.email, this.authenticationService.getPassword());
     }, 10000);
   }
