@@ -30,7 +30,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table *ngIf="groups" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered text-center" width="100%" cellspacing="0">
+                <table *ngIf="groups" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover text-center" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -44,7 +44,7 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        <tr *ngFor="let group of groups; index as i">
+                        <tr *ngFor="let group of groups; index as i" (click)="setIndex(i)">
                             <td>{{ group.groupname }}</td>
                             <td>
                                 <!-- <a class="btn btn-warning btn-circle"><fa-icon [icon]="faPencilAlt"></fa-icon></a>&nbsp; -->

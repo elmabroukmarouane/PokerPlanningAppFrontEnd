@@ -95,7 +95,15 @@ export class GroupsComponent implements OnInit, OnDestroy, AfterViewInit {
         null, 
         this.f.groupname.value);
       this.genericService.Add('group', group);
-      // this.renderer();
+      this.renderer();
+    }
+    else {
+      let group = this.groups[this.indexGroupArray];
+      group.groupname = this.f.groupname.value;
+      group.updatedate = this.genericService.getDateNow();
+      group.updatedby = this.currentUser.User.person.firstname + ' ' + this.currentUser.User.person.lastname;
+      this.genericService.Update('group', group);
+      this.renderer();
     }
     this.resetForm();
   }
@@ -103,17 +111,21 @@ export class GroupsComponent implements OnInit, OnDestroy, AfterViewInit {
   resetForm() {
     this.isUpdate = false;
     this.titleForm = 'Add Group';
+    this.indexGroupArray = -1;
     this.addUpdateForm.reset();
   }
 
   setIndex(index: any) {
+    this.isUpdate = true;
+    this.titleForm = 'Update Group';
     this.indexGroupArray = index;
+    this.f.groupname.setValue(this.groups[this.indexGroupArray].groupname);
   }
 
   delete() {
     this.genericService.Delete('group', this.groups[this.indexGroupArray].id);
     this.groups.splice(this.indexGroupArray, 1);
-    this.indexGroupArray = -1;
+    this.resetForm();
     $('#deleteModal').modal('hide');
   }
 }
